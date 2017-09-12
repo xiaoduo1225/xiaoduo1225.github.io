@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" 
+			content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<style>
+			*{
+				margin: 0;padding: 0;
+				list-style: none;
+				box-sizing: border-box;
+			}
+			a{
+				display: block;
+				text-decoration: none;
+				color: #333;
+			}
+			header{
+				width: 100%;height: 44px;
+				position: fixed;
+				top: 0;
+				z-index: 99;
+				background: #000;
+				color: #fff;
+				text-align: center;
+				line-height: 40px;
+				font-size: 20px;
+			}
+			.wrapper {
+				width: 100%;
+				height: 900px;
+			  	position: relative;
+			  	left: 0;
+			 	right: 0;
+			 	top: 44px;
+			 	background: #fafafa;
+			 	overflow: hidden;
+			 	display: block;
+			}
+			.scroller {
+				/*position: absolute;
+				z-index: 1;*/
+				width: 100%;
+				-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+				-webkit-transform: translateZ(0);
+				-moz-transform: translateZ(0);
+				-ms-transform: translateZ(0);
+				-o-transform: translateZ(0);
+				transform: translateZ(0);
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+				-webkit-text-size-adjust: none;
+				-moz-text-size-adjust: none;
+				-ms-text-size-adjust: none;
+				-o-text-size-adjust: none;
+				text-size-adjust: none;
+			  	width: 32em;
+			}
+			.scroller ul{height: 36px;}
+    		.scroller li{float: left;width: 4em;height: 36px;line-height: 36px;text-align: center;border-right: 1px solid #ccc;}
+    		.content{
+    			width: 100%;
+    		}
+    		#list li{
+    			position: relative;
+    			width: 100%;height: 100px;
+    			border-bottom: 1px solid #ccc;
+    			padding: 10px 15px;
+    		}
+    		#list li img{
+    			width: 25%;height: 62px;
+    			float: left;
+    		}
+    		#list li p{
+    			width: 70%;
+    			float: right;
+    			font-size: 15px;
+    		}
+    		#list li span{
+    			position: absolute;
+    			right: 23px;
+    			bottom: 15px;
+    			color: #ccc;
+    			float: right;
+    			font-size: 10px;
+    		}
+    		footer{
+				width: 100%;height: 98px;
+				position: fixed;
+				bottom: 0;
+				z-index: 99;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="header">
+			<p>NEWS</p>
+		</header>
+		<section class="wrapper">
+		    <div class="scroller">
+		    	<ul class="nav">
+			        <li>头条</li>
+			        <li>娱乐</li>
+			        <li>军事</li>
+			        <li>汽车</li>
+			        <li>财经</li>
+			        <li>段子</li>
+			        <li>体育</li>
+			        <li>科技</li>
+		    	</ul>
+		    	<hr />
+		    </div>
+		    <div class="content">
+		    	<ul id="list">
+		    	</ul>
+		    </div>
+	  </section>
+		<footer class="footer"></footer>
+		<script src="jquery.js"></script>
+		<script src="iscroll.js" ></script>
+		<script>
+			var myScroll = new IScroll('.wrapper',{
+      			scrollX: true
+    		})
+   			document.addEventListener('touchmove', function(e){ e.preventDefault(); },false);
+   			var nav=document.querySelector('.nav').querySelectorAll("li");
+   			var lis=document.getElementById('list')
+   			for(var i=0;i<nav.length;i++){
+   				(function(index){
+   					nav[index].onclick=function(){
+   						$.ajax({
+							url: "http://api.dagoogle.cn/news/get-news?tableNum="+(index+1)+"&pagesize=8",
+							dataType: "jsonp",
+							jsonp: "callback",
+							jsonpCallback:"fn",
+							success: function(res){
+								var str = '';
+								var da=res.data;
+						    	da.forEach(function(item,index){
+						    		str += '<li><img src="'+ item.top_image +'" />'+'<p>'+item.title+'</p><span>'+item.source+'</span>';
+						   		})
+					    		lis.innerHTML = str
+							},
+							error: function(err){
+								throw new Error(err)
+							}
+						});
+			   		}
+   				})(i);
+   			}
+		</script>
+	</body>
+</html>
